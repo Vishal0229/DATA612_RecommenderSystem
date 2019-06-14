@@ -1,0 +1,44 @@
+---
+title: "DATA612 WEEK2 Research  Discussion Assignment- part2"
+author: "Vishal Arora"
+date : "June 13, 2019"
+output:
+    prettydoc::html_pretty:
+      theme: Leonids
+---
+
+# How to handle attacks on recommender systems. Can you think of a similar example where a collective effort to alter the workings of content recommendations have been successful? How would you design a system to prevent this kind of abuse?
+
+## Classic case of Boca Raton Resort,Florida
+
+The case in question over here is removal of a Youtube star from a hotel in florida on new year's eve, which brought the wrath of fans of the you tube star and since then the hotel ratings have dropped to 1.5 stars . This you tube star has a fan following of 9 million user's. The whole article can be found at link below .                 
+
+_Boca Raton Resort Florida_
+_https://www.inc.com/chris-matyszczyk/this-5-star-hotel-got-police-to-help-it-kick-out-a-youtube-star-just-because-of-who-he-is.html_
+                   
+
+## How to handle attacks on recommendation ssytems or what factors one should take into account to prevent abuse of recommendation system.
+
+In a collaborative filtering based recommender system, users build profiles by rating certain items, and obtain personalized recommendations for other, unknown items, based on the correlation between their ratings and those of other users. The most popular types of algorithms for collaborative filtering (CF) are user-based and item-based:            
+1. User-based algorithms build for each user a neighborhood of users with similar opinions (i.e., ratings) in the system. Ratings from these users are then employed to generate recommendations for the target user.              
+2. Item-based algorithms compute a set of similar items for each item and use these similarities to compute recommendations.                                     
+
+The most common attack in case of  collaborative filtering  recommender system is "Shilling Attack"  and consists of either increasing (push attack) or lowering (nuke attack) the ratings of some target items.                       
+
+To prevent attacks on recommendation systems we can use following metrics  for coming up with an algorithm            
+1. Number of Prediction-Differences (NPD) NPD is defined for each user as the number of net prediction changes in the system after her removal from the system.                         
+2. Standard Deviation in User's Ratings This metric represents the degree in which a rating given by a user to an item differs from her average ratings.                                  
+3. Degree of Agreement with Other Users The degree of agreement is in fact the average deviation in a user's ratings from the average rating of each item.                                   
+4. Degree of Similarity with Top Neighbors As stated by its name, this metric describes the average similarity weight with the Top-K neighbors of a user.                              
+
+For more detailed study on understand the patterns of attacks on recommendation system and how we can prevent with advanced algorithm , please refer to below article
+
+
+_Preventing shilling attacks in online recommender systems_              
+_http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.60.1540&rep=rep1&type=pdf_
+
+
+
+
+
+

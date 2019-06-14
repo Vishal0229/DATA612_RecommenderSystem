@@ -1,0 +1,41 @@
+---
+title: "DATA612 WEEK2 Research  Discussion Assignment"
+author: "Vishal Arora"
+date : "June 13, 2019"
+output:
+    prettydoc::html_pretty:
+      theme: Leonids
+---
+
+# Flipkart  Recommendation System  
+
+Recommendations play a pivotal role in being the 'Online Shopping Assistant' to users via helping them discover and narrow down relevant selection. 'Similar products' is one such Recommendation module on Flipkart that helps users discover products similar to the ones they have browsed. It has one of the highest conversion rates and is a significant contributor to the company's units and revenue.
+
+Flipkart uses hybrid of content and collaborative filtering techniques to generate 'Similar Product Recommendations'. The content matching is done over product attributes and images in the catalog; and the collaborative filtering algorithm is applied over users' browse data (like product page views, wishlist, add to cart etc.) to find the most frequently co-browsed products for a given product. The ranked list of similar products based on relevancy is obtained from combining these multiple sources.
+
+Other than relevancy there are other factors which Flipkart takes into consideration for recommending the "Right Product" to user, as following:-
+
+> a)	Product Quality:-  How good is the product quality of the product? Is the seller good? How is the ratings for the product from other user's. These all Quality signals are taken into consideration before recommending the product which helps in building the "Trust Factor" with the customer.
+> b)	Performance:-  How   popular and fast selling the product is, that determines the chances of customer buying the product. This factor is taken into consideration for ranking the product for recommendation to end user.
+
+> c)	Diversity:- This factor works on the theory that in online shopping what you see is what you click, and what user clicks goes into the system, and hence the  same things are repeatedly shown to user. To break this monotony Flipkart consciously add new things for recommendations along with existing things from last visit to customer.
+
+##Flipkart  recommendation system works on 2 Layers 
+  Layer 2  works on  above 3 factors (i.e. *Product Quality, Performance & Diversity*) and powered by Machine Learning Model for Engagement  and Conversion hence to achieve Performance in over all Recommendation System.            
+  
+  Layer 1 works on following factors i.e. Co-browse patterns via Collaborative filtering, Static attribute matching & Image matching via Deep learning  for relevance of the product  to be Recommended to the customer. 
+
+The below image gives a pictorial representation of the flipkart 2 layered approach. In Sources section below is the link to flipkart blog site which gives a detailed view of the same.There are other links in the blog which give an idea to what flipkart is planning to implement in thier recommendation system to enhance and make it more effective. 
+
+
+![](https://github.com/Vishal0229/DATA612_RecommenderSystem/blob/master/week2_DiscussionAssignment/FlipkartRecommendationSystem.png?raw=true)
+
+
+
+
+## Sources
+
+_Flipkart Tech Blog_
+_https://tech.flipkart.com/e-commerce-recommendations-using-machine-learning-5002526e531a_
+
+
