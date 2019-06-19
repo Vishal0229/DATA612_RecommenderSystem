@@ -1,0 +1,325 @@
+---
+title: "Project2_Data-612- Content Based and Collaborative Filtering"
+author: "Samriti Malhotra, Vishal Arora"
+date: "June 18, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Objective :-                 
+The goal of this assignment is for you to try out different ways of implementing and configuring a recommender, and to evaluate different approaches. Implement at least two of these recommendation algorithms:                     
+. Content-Based Filtering                    
+. User-User Collaborative Filtering                
+. Item-Item Collaborative Filtering                          
+
+## Solution:- 
+We 
+
+###Loading 
+```{r message=FALSE, warning=FALSE, eval=TRUE, echo=FALSE}
+if(!"recommenderlab" %in% rownames(installed.packages()))
+  install.packages("recommenderlab")
+library(recommenderlab)
+library(ggplot2)
+library(reshape2)
+library(kableExtra)
+```
+
+
+### Data download and preperation
+
+```{r}
+
+
+
+
+help(package="recommenderlab")
+
+
+data_package <- data(package="recommenderlab")
+data_package$results[,"Item"]
+
+
+data("MovieLense")
+MovieLense
+class(MovieLense)
+
+methods(class =class(MovieLense))
+
+object.size(MovieLense)
+object.size(as(MovieLense,"matrix"))
+
+
+similarity_user <- similarity(MovieLense[1:4,],method="cosine", which="users")
+class(similarity_user)
+hclust(similarity_user)
+
+as.matrix(similarity_user)
+
+image(as.matrix(similarity_user),main="User Similarity")
+
+similarity_item <- similarity(MovieLense[,1:4],method="cosine", which="items")
+as.matrix(similarity_item)
+
+image(as.matrix(similarity_item),main="Item similarity")
+
+recommender_models <- recommenderRegistry$get_entries(dataType="realRatingMatrix")
+names(recommender_models)
+
+recommender_models$IBCF_realRatingMatrix$parameters
+
+library(ggplot2)
+data("MovieLense")
+class(MovieLense)
+
+dim(MovieLense)
+slotNames(MovieLense)
+class(MovieLense@data)
+
+dim(MovieLense@data)
+
+vector_ratings <- as.vector(MovieLense@data)
+unique(vector_ratings)
+table_ratings <- table(vector_ratings)
+table_ratings
+str(vector_ratings)
+
+vector_ratings<- vector_ratings[vector_ratings!=0]
+
+vector_ratings <- factor(vector_ratings)
+str(vector_ratings)
+#visualize movie data ratngs using ggplot2
+qplot(vector_ratings) + ggtitle("Distribution of the ratings")
+
+# Doing other explanotary analysis on movie data
+
+view_per_movie <- colCounts(MovieLense)
+head(view_per_movie)
+
+table_views <- data.frame(
+  movie = names(view_per_movie),
+  views = view_per_movie
+)
+head(table_views)
+  
+table_views <- table_views[order(table_views$views,decreasing = TRUE),]
+table_views
+
+ggplot(table_views[1:6,],aes(x=movie, y=views))+
+  geom_bar(stat="identity")+theme(axis.text.x=element_text(angle=45,hjust=1))+ggtitle("Number of views of the top movies")
+
+
+#exploring the average ratings
+
+average_ratings <- colMeans(MovieLense)
+tail(average_ratings)
+
+qplot(average_ratings)+stat_bin(binwidth = 0.1)+
+  ggtitle("Distribution of the average movie rating")
+
+average_ratings <- average_ratings[view_per_movie >100]
+
+qplot(average_ratings)+stat_bin(binwidth = 0.1)+
+  ggtitle("Distribution of the relevant average movie rating(only taking movies with views >100")
+
+#Heatmap of MovieLens data
+image(MovieLense,main="Heatmap of the rating matrix")
+image(MovieLense[1:10,1:15],main="Heatmap of the top 10 rows and 15 columns rating matrix")
+
+
+# To determine the most relevant users(who has seen many movies) and relevant movies(which has been seen by many users). 1) Determine min no of movies per user 2.) Determine min  no of users per movie.3) Select users and movies matching these criteria.
+#we will use quantile function for this
+min_n_movies <- quantile(rowCounts(MovieLense),0.99)
+min_n_movies
+min_n_users <- quantile(colCounts(MovieLense),0.99)
+min_n_users
+
+image(MovieLense[rowCounts(MovieLense)> min_n_movies, colCounts(MovieLense)>min_n_users],main="Heatmap of relevant top users & movies.")
+
+
+#Data Preperation
+#1) Select the relevant data 2) Normalize the data
+
+#as rule of thumb for beginning user who rating more than 50 movies and ovies which have been watched more than 100 time. those are the ones we gng to take initially.
+
+ratings_movies <- MovieLense[rowCounts(MovieLense)>50, colCounts(MovieLense)>100]
+
+ratings_movies
+
+# lets take the top 2% users and movies and prepare a heatmap.
+
+min_movies <- quantile(rowCounts(ratings_movies),0.98)
+min_users <- quantile(colCounts(ratings_movies),0.98)
+
+image(ratings_movies[rowCounts(ratings_movies)>min_movies,colCounts(ratings_movies)>min_users],main="Heatmap of the top users and movies")
+
+# To know the average rations per user
+average_ratings_perUser <- rowMeans(ratings_movies)
+qplot(average_ratings_perUser)+ stat_bin(binwidth=0.1)+ggtitle("Distribution of the average rating per user")
+#now normalize the data, as lot of user have consistently given high ratings which might add a bias.So to remove this bias normalize the data which is done by using normalize functions
+
+ratings_movies_norm <- normalize(ratings_movies) 
+sum(rowMeans(ratings_movies_norm)>0.00001)
+
+image(ratings_movies_norm[rowCounts(ratings_movies_norm)>min_movies,colCounts(ratings_movies_norm)>min_users],main="Heatmap of the top users and movies after normalization")
+
+ratings_movies_watched <- binarize(ratings_movies,minRating=1)
+
+min_movies_binary <- quantile(rowCounts(ratings_movies),0.95)
+min_users_binary <- quantile(colCounts(ratings_movies),0.95)
+
+
+image(ratings_movies_watched[rowCounts(ratings_movies)>min_movies_binary,colCounts(ratings_movies)>min_users_binary],main="Heatmap of the top 5% users and movies")
+
+
+ratings_movies_good <- binarize(ratings_movies,minRating=3)
+
+image(ratings_movies_good[rowCounts(ratings_movies)>min_movies_binary,colCounts(ratings_movies)>min_users_binary], main="Heatmap for top users & movies")
+
+
+
+
+#Building an Item-Based Collaborative Filtering MODEL 
+# getting up training & test data sets
+
+which_train <- sample(x=c(TRUE,FALSE), size=nrow(ratings_movies),replace=TRUE, prob=c(0.8,0.2))
+
+dim(ratings_movies)
+dim(which_train)
+head(which_train)
+recc_data_train<- ratings_movies[which_train,]
+recc_data_test <- ratings_movies[!which_train,]
+
+dim(recc_data_train)
+dim(recc_data_test)
+
+recommender_models <- recommenderRegistry$get_entries(dataType="realRatingMatrix")
+recommender_models$IBCF_realRatingMatrix$parameters
+
+#using IBCF(Item Based Collaborative filtering) model
+recc_model <-Recommender(data=recc_data_train,method="IBCF",parameter=list(k=30))
+recc_model
+class(recc_model)
+#Exploring the recommender model
+
+model_details <- getModel(recc_model)
+model_details$description
+# it didn't worked ?model_details$sim
+model_details$k
+
+#model_details$sim contains the similarity matrix
+dim(model_details$sim)
+#the above method tells us that as expected model_details$sim is a square matrix whose size is equal to the number of items .
+
+n_items_top <-20
+
+image(model_details$sim[1:n_items_top,1:n_items_top],main="Heatmap of the first 20 rows & 20 columns")
+
+model_details$k
+row_sums <- rowSums(model_details$sim>0)
+table(row_sums)
+
+col_sums<- colSums(model_details$sim>0)
+table(col_sums)
+#Lets build the distribution chart
+qplot(col_sums)+stat_bin(binwidth=1)+ggtitle("Distribution of the column count")
+
+#lets see which movie has most elements
+which_max <- order(col_sums,decreasing = TRUE)[1:6]
+rownames(model_details$sim)[which_max]
+
+#Applying the recommender model on the test data/set
+#n_recommended is the no of items we want to recommend for each user
+n_recommded<-6
+# How the model works
+#1) Extract the rating of each purchase for this item. This ratings is used as a weight.
+#2) Extract the similarity of the items with eaach purchase associated with this item.
+#Multiply the weight with related similarity
+# Sum everything up.
+recc_predicted <- predict(object = recc_model,newdata=recc_data_test,n=n_recommded)
+
+recc_predicted
+class(recc_predicted)
+slotNames(recc_predicted)
+recc_predicted@items[[1]]
+
+#we can extract the movies based on the item labels for that user
+recc_user_1 <- recc_predicted@items[[1]]
+recc_movies_user_1 <- recc_predicted@itemLabels[recc_user_1]
+recc_movies_user_1
+
+# construct matrix with the recommendation for each user
+recc_matrix <- sapply(recc_predicted@items, function(x){colnames(recc_data_test)[x]})
+dim(recc_matrix)
+?colnames
+recc_matrix[,1:6]
+#build a recommendation vector so build a frequncy plot
+
+number_of_items<- factor(table(recc_matrix))
+chart_title <- "Distribution of the number of items for IBCF"
+
+qplot(number_of_items)+ggtitle(chart_title)
+# Lets see which are most popular movies
+number_of_items_sorted <- sort(number_of_items,decreasing=TRUE)
+number_of_items_top <- head(number_of_items_sorted,n=4)
+table_top <- data.frame(names(number_of_items_top),number_of_items_top)
+table_top
+
+# User-based collaborative Filtering
+# In item based filtering , we 1) Identify the items which are similar in terms of having been purchased by the same people.
+#2) Recommend to a new user the items that are similar to its purchases
+
+# For User based collaborative filtering , we follow an opposite approach.1) Given for a new user first identify similar users 2) Then recomemnd top-rated ietms purchased by similar users.
+
+
+# Steps for UBCF
+# Step1 :- Measure how similar each user is to the new user. Like IBCF simialry measures are correlation(Pearson) & Cosine
+# Step2:- Identify most similar users . Options are 
+# a) Take into account the top K users(k-nearest neighbours)
+#b) Take into account the users whose similarity is above the defined threshold
+#Step3 :- Rate the items purchased by most similar users. The ratins is the average among similar users and the appraoches are 
+#a) Average Rating
+#b) Weighted average rating, using the similarity as weights
+#Steps4 :- Pick the top rated items.
+
+# Build the UBCF recommender model
+
+recommender_modelsUBCF <- recommenderRegistry$get_entries(dataType="realRatingMatrix")
+recommender_modelsUBCF$UBCF_realRatingMatrix$parameters
+
+recc_model_ubcf <- Recommender(data=recc_data_train, method="UBCF")
+recc_model_ubcf
+
+model_details_ubcf <- getModel(recc_model_ubcf)
+names(model_details_ubcf)
+
+model_details_ubcf$data
+#Applying the model on test set
+
+n_recommded <-6
+
+recc_predicted_ubcf <- predict(object=recc_model_ubcf, newdata=recc_data_test,n=n_recommded)
+recc_predicted_ubcf
+
+recc_matrix <- sapply(recc_predicted_ubcf@items, function(x){colnames(ratings_movies)[x]})
+dim(recc_matrix)
+
+recc_matrix[,1:4]
+
+number_of_items <- factor(table(recc_matrix))
+chart_title <- "Distribution of the number of items for UBCF"
+
+qplot(number_of_items)+ggtitle(chart_title)
+
+#lets take a look ate top titles
+
+number_of_items_sorted<-sort(number_of_items,decreasing=TRUE)
+number_of_items_top <- head(number_of_items_sorted,n=4)
+table_top <- data.frame(names(number_of_items_top),number_of_items_top)
+table_top
+
+
+```
