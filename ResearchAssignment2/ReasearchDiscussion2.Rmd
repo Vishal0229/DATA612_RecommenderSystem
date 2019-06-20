@@ -1,0 +1,53 @@
+---
+title: "DATA612  Research  Discussion Assignment 2"
+author: "Vishal Arora"
+date : "June 20, 2019"
+output:
+    prettydoc::html_pretty:
+      theme: Leonids
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Summarization of Music Recommendations at Scale with Spark (Spotify)
+
+## Overview 
+The link to the video can be found at [Music Recommendations at Spotify](http://www.youtube.com/watch?v=3LBgiFch4_g).                            
+                 
+
+How Spotify recommends music to user(by player/ Astist / Radio/ Personalizes recommendation/ Now Playing)            
+
+####Good Recommendations                                                            
+
+Manually Curation: works with small catalogue, as it does not scales with hugh data sets.                                        
+Manually Tag Attributes :- Manually Tagging attributes  to you songs. Music experts to tag attributes to songs, does not scales well with high dataset.                                           
+Audio Content metadata, Text Analysis: - Which echonest does and now Spotify doing it look for audio content , text analysis on twitter, blog  etc. to find relationship between songs and artists.                  
+Collaborative Filtering: - what user are listening to and finding relationships between user and songs and then recommending based on that.                                       
+                                                                               
+
+
+####Explicit Matrix Factorization (which was used by Netflix)                           
+Based on matrix where users have given rating to movies and haven't given rating to some movies, so we build a model predicting ratings for the ones  for which user hasn't given recommendations and then using the model to recommend other movies to the user. This can be achieved by IBCF or UBCF model.                                    
+For this  technique lower level matrix is used which is nothing but a smaller matrix of original matrix which can be in millions and using RMSE to find the approximate ratings close to the ratings given by user to i.e. minimize RMSE.                                                   
+
+#####Implicit Matrix Factorization ( What spotify have)                                                             
+As Spotify does have ratings of users on songs but implicitly infer based on what user listens .Using Binary factorization which is all the ratings are either in 1's or 0's , 1= streamed & 0= not streamed. Using a function of total streams as weight to minimize weighted RMSE.                                                             
+Alternating Least Squares method is one way to solve this, i.e. fix one vector(let say songs) and solve the other vector(user) , and then fix the user vector and solve the songs vector and thn alternatively repeat until converge. And when we solve for optimal song vector for a given song , we need only the user ratings for which user has streamed thus ignoring all 0's.                                                                                     
+
+Scale up Implicit Matrix Factorization with Hadoop(Full gridify Matrix) , Where ratings matrix is divided into various blocks and each block refers to subset of user and songs. All users marked row=0 and all songs in column =0 put them in one block and hence forth. Using Hadoop distributed cache and each time performing iteratively, the problem was of reading and writing from disk, which is I/O bottleneck. Hence Spark came into picture so reading from memory rather than disk.                              
+
+In first attempt, which Spotify used on spark, the issue was they were sending full copy of all the item vector to each worker, there was lot of shuffling over the network.In their approach, they rectified the previous issues, by diving the rating matrix into smaller matrix and sending the copy to each worker and then sending the copy of item vector corresponding to the worker, then doing the shuffling to do group by user, and then aggregating to find the optimal user vectors. Less shuffling of rating matrix. But still a lot of shuffling to avoid going over network.                 
+
+Third Attempt (Half gridify) Partition rating matrix on user and items. Thus having all ratings for a given user in one block thus cutting on shuffling over the network for group by user and aggregation. And sending these blocks to each partition (worker), but the potential blocking is that item vector has to be send to each worker for computing thus requiring more local memory.                               
+                                 
+
+
+Then it showed that Half gridify(PairRDDFFunctions) of spark is faster than Full Gridify approach of spark which in turn is quiet faster than Hadoop approach of Map and Reduce using ALS.                                
+ 
+## Summary                                 
+Speaker gave an overview of the various recommendation being used in market for recommendation by various players in market.Then he took the example of how they implemented the recommendation initially with Hadoop and then used Spark(Fully gridify ) approach to resolve the I/O bottlenecks in hadoop and then finally they restructed ther approach with Spark(Half Gridify) to achieve further optimization using ALS method.                      
+
+
+
