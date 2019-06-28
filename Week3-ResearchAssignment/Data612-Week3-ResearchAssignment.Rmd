@@ -1,0 +1,27 @@
+---
+title: "DATA612  Research  Discussion Assignment :- 3"
+author: "Vishal Arora"
+date: "June 27, 2019"
+output:
+  html_document:
+    df_print: paged
+  prettydoc::html_pretty:
+    theme: Leonids
+---
+
+
+##In what ways do you think Recommender Systems reinforce human bias?
+
+Machines don't have a notion of "ethics" to fight against and human bias can be unconscious (implicit bias). This seems evident in the sense that bias is a huge concern when creating algorithms. If recommender systems didn't reinforce segmentation and unethical targeting, there should be a standard baseline created against which target would be measured. The issue is very complex and seems to be rooted in psychology.
+
+Recommender system amplifies algorithmic bias, which describes systematic and repeatable errors in a computer system that create unfair outcomes, such as privileging one arbitrary group of users over others. Bias can emerge due to many factors, including but not limited to the design of the algorithm itself, unintended or unanticipated use or decisions relating to the way data is coded, collected, selected or used to train the algorithm.
+
+ 
+
+##Do you think recommender systems reinforce or help to prevent unethical targeting or customer segmentation?
+
+Essentially, it seems more apparent that they reinforce unethical target.[Machine bias in criminal sentencing](https://www.propublica.org/article/machine-bias-risk-assessments-in-criminal-sentencing)
+
+This blog does study on an algorithm used across the country to predict future criminals. And it's biased against blacks.
+
+If computers could accurately predict which defendants were likely to commit new crimes, the criminal justice system could be fairer and more selective about who is incarcerated and for how long. The trick, of course, is to make sure the computer gets it right. If it's wrong in one direction, a dangerous criminal could go free. If it's wrong in another direction, it could result in someone unfairly receiving a harsher sentence or waiting longer for parole than is appropriate. 
