@@ -1,0 +1,26 @@
+---
+title: "Reasearch Discussion 4"
+author: "Vishal Arora"
+date: "July 4, 2019"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Research Assignemnt 4 :  Mitigating the Harm of Recommender Systems
+
+
+Content-based recommendation systems and collaborative filtering are never neutral; they are always ranking one video, pin, or group against another when they're deciding what to show you. They're opinionated and influential, though not in the simplistic or partisan way that some critics contend. And as extreme, polarizing, and sensational content continues to rise to the top, it's increasingly obvious that curatorial algorithms need to be tempered with additional oversight, and reweighted to consider what they're serving up.                              
+
+Some of this work is already underway. Project Redirect, an effort by Google Jigsaw, redirects certain types of users who are searching YouTube for terrorist videos-people who appear to be motivated by more than mere curiosity. Rather than offer up more violent content, the approach of that recommendation system is to do the opposite-it points users to content intended to de-radicalize them.                               
+
+Platforms need to transparently, thoughtfully, and deliberately take ownership of this issue. Perhaps that involves creating a visible list of "Do Not Amplify" topics in line with the platform's values. Perhaps it's a more nuanced approach: inclusion in recommendation systems is based on a quality indicator derived from a combination of signals about the content, the way it's disseminated (are bots involved?), and the authenticity of the channel, group, or voice behind it. Platforms can decide to allow Pizzagate content to exist on their site while simultaneously deciding not to algorithmically amplify or proactively proffer it to users.
+
+Ultimately, we're talking about choice architecture, a term for the way that information or products are presented to people in a manner that takes into account individual or societal welfare while preserving consumer choice. The presentation of choices has an impact on what people choose, and social networks' recommender systems are a key component of that presentation; they are already curating the set of options. This is the idea behind the "nudge"-do you put the apples or the potato chips front and center on the school lunch line?               
+
+
